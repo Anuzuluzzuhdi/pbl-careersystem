@@ -15,7 +15,17 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        $this->call([
+            CareersTableSeeder::class,
+            EducationsTableSeeder::class,
+            SpecializationsTableSeeder::class,
+            SkillsTableSeeder::class,
+            CertificationsTableSeeder::class,
+            CareerEducationWeightsTableSeeder::class,
+            CareerSpecializationWeightsTableSeeder::class,
+            CareerSkillWeightsTableSeeder::class,
+            CareerCertificationWeightsTableSeeder::class,
+        ]);
 
         User::factory()->create([
             'name' => 'Test User',
