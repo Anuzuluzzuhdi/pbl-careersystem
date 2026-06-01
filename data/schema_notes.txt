@@ -1,0 +1,36 @@
+
+DATABASE TABLE RELATION NOTES
+
+1. careers
+- PK: career_id
+
+2. educations
+- PK: education_id
+
+3. specializations
+- PK: specialization_id
+
+4. skills
+- PK: skill_id
+
+5. certifications
+- PK: certification_id
+
+6. career_education_weights
+- FK: career_id -> careers.career_id
+- FK: education_id -> educations.education_id
+
+7. career_specialization_weights
+- FK: career_id -> careers.career_id
+- FK: specialization_id -> specializations.specialization_id
+
+8. career_skill_weights
+- FK: career_id -> careers.career_id
+- FK: skill_id -> skills.skill_id
+
+9. career_certification_weights
+- FK: career_id -> careers.career_id
+- FK: certification_id -> certifications.certification_id
+
+WEIGHT FORMULA:
+weight = frequency / total_occurrence_of_career
