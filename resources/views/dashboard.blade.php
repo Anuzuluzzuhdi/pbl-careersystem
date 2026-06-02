@@ -1,4 +1,19 @@
 <x-app-layout>
+    <style>
+        /* Fallback visual for selected items if Tailwind classes are not applied at runtime */
+        .selected {
+            border-color: #6366f1 !important; /* indigo-500 */
+            background-color: #eef2ff !important; /* indigo-50 */
+            color: #1f2937 !important; /* slate-800 */
+        }
+        @media (prefers-color-scheme: dark) {
+            .selected {
+                border-color: #6366f1 !important;
+                background-color: #0f172a !important; /* dark indigo-ish */
+                color: #e6eef8 !important;
+            }
+        }
+    </style>
     <x-slot name="header">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
@@ -137,7 +152,7 @@
                             <p class="text-sm text-slate-600 dark:text-slate-400">Klik skill yang dimiliki. Pilihan akan disorot saat dipilih.</p>
                             <div class="grid gap-3 md:grid-cols-2">
                                 @foreach ($skills as $item)
-                                    <button type="button" data-value="{{ $item->skill_id }}" data-group="skills" class="skill-item rounded-3xl border border-slate-200 bg-white px-4 py-3 text-left text-slate-800 shadow-sm transition hover:border-indigo-400 hover:bg-indigo-50 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:hover:border-indigo-500 dark:hover:bg-indigo-950 {{ in_array($item->skill_id, request('skill_ids', [])) ? 'selected' : '' }}">
+                                    <button type="button" data-value="{{ $item->skill_id }}" data-group="skills" class="skill-item rounded-3xl border border-slate-200 bg-white px-4 py-3 text-left text-slate-800 shadow-sm transition hover:border-indigo-400 hover:bg-indigo-50 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:hover:border-indigo-500 dark:hover:bg-indigo-950 {{ in_array($item->skill_id, request('skill_ids', [])) ? 'selected border-indigo-500 bg-indigo-50 text-indigo-900 dark:border-indigo-500 dark:bg-indigo-950' : '' }}">
                                         <div class="flex items-center justify-between gap-2">
                                             <span class="font-medium">{{ $item->skill_name }}</span>
                                             <span class="text-xs text-slate-500 dark:text-slate-400">Skill</span>
@@ -153,7 +168,7 @@
                             <p class="text-sm text-slate-600 dark:text-slate-400">Pilih spesialisasi yang relevan dengan tujuan karir Anda.</p>
                             <div class="grid gap-3 md:grid-cols-2">
                                 @foreach ($specializations as $item)
-                                    <button type="button" data-value="{{ $item->specialization_id }}" data-group="specializations" class="specialization-item rounded-3xl border border-slate-200 bg-white px-4 py-3 text-left text-slate-800 shadow-sm transition hover:border-indigo-400 hover:bg-indigo-50 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:hover:border-indigo-500 dark:hover:bg-indigo-950 {{ in_array($item->specialization_id, request('specialization_ids', [])) ? 'selected' : '' }}">
+                                    <button type="button" data-value="{{ $item->specialization_id }}" data-group="specializations" class="specialization-item rounded-3xl border border-slate-200 bg-white px-4 py-3 text-left text-slate-800 shadow-sm transition hover:border-indigo-400 hover:bg-indigo-50 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:hover:border-indigo-500 dark:hover:bg-indigo-950 {{ in_array($item->specialization_id, request('specialization_ids', [])) ? 'selected border-indigo-500 bg-indigo-50 text-indigo-900 dark:border-indigo-500 dark:bg-indigo-950' : '' }}">
                                         <div class="flex items-center justify-between gap-2">
                                             <span class="font-medium">{{ $item->specialization_name }}</span>
                                             <span class="text-xs text-slate-500 dark:text-slate-400">Spesialisasi</span>
@@ -240,8 +255,10 @@
 
         let currentStep = 1;
         const maxStep = 4;
-        const selectedSkills = new Set(@json((array) request('skill_ids', [])));
-        const selectedSpecializations = new Set(@json((array) request('specialization_ids', [])));
+        const selectedSkills = new Set(@json(array_map('strval', (array) request('skill_ids', []))));
+        const selectedSpecializations = new Set(@json(array_map('strval', (array) request('specialization_ids', []))));
+        console.log('skillItems count:', skillItems.length, 'specializationItems count:', specializationItems.length);
+        console.log('selectedSkills:', Array.from(selectedSkills), 'selectedSpecializations:', Array.from(selectedSpecializations));
 
         function updateStep() {
             stepPanels.forEach((panel, index) => {
@@ -258,9 +275,11 @@
             if (selectedSet.has(value)) {
                 selectedSet.delete(value);
                 item.classList.remove('border-indigo-500', 'bg-indigo-50', 'text-indigo-900', 'dark:border-indigo-500', 'dark:bg-indigo-950');
+                item.classList.remove('selected');
             } else {
                 selectedSet.add(value);
                 item.classList.add('border-indigo-500', 'bg-indigo-50', 'text-indigo-900', 'dark:border-indigo-500', 'dark:bg-indigo-950');
+                item.classList.add('selected');
             }
             updateHiddenInputs();
         }
@@ -269,6 +288,7 @@
             items.forEach((item) => {
                 if (selectedSet.has(item.dataset.value)) {
                     item.classList.add('border-indigo-500', 'bg-indigo-50', 'text-indigo-900', 'dark:border-indigo-500', 'dark:bg-indigo-950');
+                    item.classList.add('selected');
                 }
             });
         }
